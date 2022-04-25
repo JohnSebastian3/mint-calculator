@@ -30,6 +30,9 @@ function operate(op, num1, num2) {
     case '/':
       result = divide(num1, num2);
       break;
+    case '%':
+      result = percent(num1, num2);
+      break;
     default:
       break;
   }
@@ -49,7 +52,17 @@ function multiply(x, y) {
 }
 
 function divide(x, y) {
+  if(y === 0) {
+    console.log('Cannot divide by 0!');
+    clearAll();
+    current.innerText = '0';
+    return;
+  }
   return x / y;
+}
+
+function percent(x, y) {
+  return x * (y / 100);
 }
 
 
@@ -58,12 +71,14 @@ const numberButtons = document.querySelectorAll('.number');
 const opButtons = document.querySelectorAll('.operation');
 const equals = document.querySelector('.equals');
 const clear = document.querySelector('.clear');
+const delButton = document.querySelector('.delete');
 const previous = document.querySelector('.previous');
 const current = document.querySelector('.current');
 let currentOp = '';
 let displayValue = '';
 let previousVal = '';
 let currentVal = '';
+let computed = false;
 
 numberButtons.forEach(button => {
   button.addEventListener('click', () => {
@@ -72,17 +87,35 @@ numberButtons.forEach(button => {
   })
 })
 
+document.addEventListener('keydown', e => {
+  if(e.key === '+' || e.key === '/' || e.key === '*' || e.key === '-' || e.key === '%') {
+    handleOperator(e.key);
+  } else if(e.key === 'Enter') {
+    compute();
+  } else if(e.key === 'Backspace') {
+    backspace();
+  } else if(e.key === 'Escape') {
+    clearAll();
+  }else if(!isNaN(e.key)) {
+    appendNumber(e.key);
+    updateDisplay();
+  } 
+})
+
+
+
 opButtons.forEach(button => {
   button.addEventListener('click', () => {
     handleOperator(button.innerText);
   })
 })
 
+delButton.addEventListener('click', () => {
+  backspace();
+})
+
 equals.addEventListener('click', () => {
-  let result = operate(currentOp, previousVal, currentVal);
-  current.innerText = result;
-  previousVal = '';
-  previous.innerText = '';
+  compute();
 })
 
 clear.addEventListener('click', () => {
@@ -92,15 +125,25 @@ clear.addEventListener('click', () => {
 
 
 function appendNumber(number) {
-  // if(currentVal !== '') {
-  //   currentVal = '';
-  //   displayValue = '';
-  //   // current.innerText = '';
-  // }
+
+  if(number === '.' && current.innerText.includes('.')) {
+    return;
+  }
+  // if(number === '.' && (current.innerText === '0' || current.innerText === '' || current.innerText === '.')) {
+  //   displayValue = '0';
+  //   current.innerText = '0';
+  // } 
+
+  if(computed) {
+    currentVal = '';
+    displayValue = '';
+    current.innerText = '';
+    computed = false;
+  }
   displayValue += number;
-  console.log(displayValue);
-  currentVal += number;
-  console.log('Current Val: ', currentVal);
+  if(number !== '.') {
+    currentVal += number;
+  }
 }
 
 function updateDisplay() {
@@ -108,7 +151,41 @@ function updateDisplay() {
   currentVal = +current.innerText;
 }
 
+function compute() {
+  if(currentOp !== '') {
+    console.log(previousVal, currentVal);
+    let result = operate(currentOp, previousVal, currentVal);
+    if(result || result === 0) {
+      current.innerText = result;
+      currentVal = result;
+      previousVal = '';
+      previous.innerText = '';
+      computed = true;
+      currentOp = '';
+    }
+  }
+}
+
 function handleOperator(op) {
+
+  if(currentOp && !current.innerText) {
+    return;
+  }
+
+  if(previous.innerText && current.innerText) {
+    let newOp = previous.innerText[previous.innerText.length - 1];
+    let result = operate(newOp, previousVal, currentVal);
+    console.log(result);
+    previous.innerText = `${result} ${op}`;
+    previousVal = result;
+    currentOp = op;
+    current.innerText = '';
+    currentVal = '';
+    displayValue = '';
+    return;
+  }
+
+
   previous.innerText = current.innerText;
   previousVal = currentVal;
   currentOp = op;
@@ -125,4 +202,15 @@ function clearAll() {
   previousVal = '';
   currentVal = '';
   currentOp = '';
+}
+
+function backspace() {
+  if(!computed) {
+
+    current.innerText = current.innerText.slice(0, -1);
+    displayValue = current.innerText;
+    console.log(currentVal);
+    currentVal = Math.floor(currentVal/10);
+    console.log(currentVal);
+  }
 }

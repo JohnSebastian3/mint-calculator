@@ -89,6 +89,7 @@ ul {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
+
 li {
  /* color: rgba(238, 255, 254, 0.67) */
   font-size: 2.5rem;
@@ -110,6 +111,9 @@ li:active {
   transform: scale(.92);
   box-shadow: 1px 1px 12px 1px rgba(112,170,213, 0.5);
   
+}
+.equals {
+  grid-column-start: span 2;
 }
 
 
