@@ -5,12 +5,6 @@
 // Divide
 
 
-function Calculator() {
-
-}
-
-
-
 
 function operate(op, num1, num2) {
 
@@ -156,8 +150,13 @@ function compute() {
     console.log(previousVal, currentVal);
     let result = operate(currentOp, previousVal, currentVal);
     if(result || result === 0) {
-      current.innerText = result;
-      currentVal = result;
+      if(result.toString().length > 8) {
+        current.innerText = result.toFixed(6);
+        currentVal = result.toFixed(6);
+      } else {
+        current.innerText = result; 
+        currentVal = result
+      }
       previousVal = '';
       previous.innerText = '';
       computed = true;
@@ -205,12 +204,14 @@ function clearAll() {
 }
 
 function backspace() {
-  if(!computed) {
-
+  if(!computed && currentVal !== '') {
+    console.log('Current val', currentVal)
     current.innerText = current.innerText.slice(0, -1);
     displayValue = current.innerText;
-    console.log(currentVal);
+    if(displayValue === '') {
+      displayValue = '0';
+      current.innerText = displayValue;
+    }
     currentVal = Math.floor(currentVal/10);
-    console.log(currentVal);
   }
 }

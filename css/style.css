@@ -116,6 +116,10 @@ li:active {
   grid-column-start: span 2;
 }
 
+.clear, .delete {
+  color:rgba(169, 252, 213, 0.8);
+}
+
 
 /******************************************
 /* ADDITIONAL STYLES
