@@ -1,5 +1,6 @@
 # Mint Calculator
 This is the Mint calculator. It is just like a regular calculator, but with a little bit of style. 
+
 **Link to project:** https://johnsebastian3.github.io/mint-calculator/
 
 ![alt tag](mintcalcgif.gif)
